@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Attendance System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .controls {
+            padding: 30px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .control-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .control-group select, .control-group input {
+            padding: 10px 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .control-group select:focus, .control-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-card:nth-child(2) {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .stat-card:nth-child(3) {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .stat-card:nth-child(4) {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .stat-card h3 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+        }
+
+        th {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9em;
+            letter-spacing: 0.5px;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #e9ecef;
+            transition: all 0.3s;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+            transform: scale(1.01);
+        }
+
+        .attendance-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-present {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-present:hover {
+            background: #218838;
+        }
+
+        .btn-absent {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-absent:hover {
+            background: #c82333;
+        }
+
+        .status-present {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .status-absent {
+            color: #dc3545;
+            font-weight: 600;
+        }
+
+        .percentage {
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .percentage-high {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .percentage-medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .percentage-low {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+            font-size: 1.2em;
+        }
+
+        @media (max-width: 768px) {
+            .control-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            table {
+                font-size: 0.9em;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+          <h1>SUNSTONE</h1>
+            <h2>📚 Online Attendance System</h2>
+            <p>Track and manage student attendance efficiently</p>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="subjectSelect">Subject:</label>
+                <select id="subjectSelect">
+                    <option value="">Select Subject</option>
+                </select>
+
+                <label for="dateInput">Date:</label>
+                <input type="date" id="dateInput">
+
+                <button class="btn btn-primary" onclick="loadAttendance()">Load Attendance</button>
+                <button class="btn btn-success" onclick="saveAttendance()">Save Attendance</button>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="stats">
+                <div class="stat-card">
+                    <h3 id="totalStudents">0</h3>
+                    <p>Total Students</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="presentCount">0</h3>
+                    <p>Present Today</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="absentCount">0</h3>
+                    <p>Absent Today</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="avgAttendance">0%</h3>
+                    <p>Average Attendance</p>
+                </div>
+            </div>
+
+            <div id="attendanceTable"></div>
+        </div>
+    </div>
+
+    <script>
+        const subjects = {
+            'Java Script': { time: '09:00 AM - 10:30 AM', code: 'BCA617A' },
+            'Web technology with HTML and CSS': { time: '10:45 AM - 12:15 PM', code: 'BCA619A' },
+            'Analysis and Design of Algorithms': { time: '01:00 PM - 02:30 PM', code: 'BCA621A' },
+            'Advance DBMS': { time: '02:45 PM - 04:15 PM', code: 'BCA630A' },
+            'Career Building': { time: '09:00 AM - 10:30 AM', code: 'BCA625A' }
+        };
+
+        const students = [
+            { id: 1, name: 'Kartik Singh', rollNo: '24BCAN0560' },
+            { id: 2, name: 'Palak Soni', rollNo: '24BCAN0556' },
+            { id: 3, name: 'Doulat Singh', rollNo: '24BCAN05433' },
+            { id: 4, name: 'Ananya Singh', rollNo: '24BCAN0987' },
+            { id: 5, name: 'Rohan Verma', rollNo: '24BCAN9854' },
+            { id: 6, name: 'Diya Gupta', rollNo: '24BCAN8634' },
+            { id: 7, name: 'Kabir Reddy', rollNo: '24BCAN0765' },
+            { id: 8, name: 'Ishita Joshi', rollNo: '24BCAN9843' },
+            { id: 9, name: 'Vihaan Mehta', rollNo: '24BCAN7653' },
+            { id: 10, name: 'Saanvi Agarwal', rollNo: '24BCAN7690' }
+        ];
+
+        let attendanceData = {};
+        let currentAttendance = {};
+
+        function initializeSubjects() {
+            const select = document.getElementById('subjectSelect');
+            Object.keys(subjects).forEach(subject => {
+                const option = document.createElement('option');
+                option.value = subject;
+                option.textContent = `${subject} (${subjects[subject].time})`;
+                select.appendChild(option);
+            });
+        }
+
+        function setDefaultDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('dateInput').value = today;
+        }
+
+        function loadAttendance() {
+            const subject = document.getElementById('subjectSelect').value;
+            const date = document.getElementById('dateInput').value;
+
+            if (!subject || !date) {
+                alert('Please select both subject and date!');
+                return;
+            }
+
+            const key = `${subject}_${date}`;
+            currentAttendance = attendanceData[key] || {};
+
+            renderAttendanceTable(subject);
+            updateStats();
+        }
+
+        function renderAttendanceTable(subject) {
+            const tableDiv = document.getElementById('attendanceTable');
+            
+            if (!subject) {
+                tableDiv.innerHTML = '<div class="no-data">Please select a subject to view attendance</div>';
+                return;
+            }
+
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Roll No</th>
+                            <th>Student Name</th>
+                            <th>Subject</th>
+                            <th>Timing</th>
+                            <th>Status</th>
+                            <th>Attendance %</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            students.forEach(student => {
+                const status = currentAttendance[student.id] || 'Not Marked';
+                const percentage = calculateAttendancePercentage(student.id, subject);
+                const percentageClass = percentage >= 75 ? 'percentage-high' : 
+                                       percentage >= 50 ? 'percentage-medium' : 'percentage-low';
+
+                html += `
+                    <tr>
+                        <td>${student.rollNo}</td>
+                        <td>${student.name}</td>
+                        <td>${subject} (${subjects[subject].code})</td>
+                        <td>${subjects[subject].time}</td>
+                        <td class="${status === 'Present' ? 'status-present' : status === 'Absent' ? 'status-absent' : ''}">${status}</td>
+                        <td><span class="percentage ${percentageClass}">${percentage.toFixed(1)}%</span></td>
+                        <td>
+                            <button class="attendance-btn btn-present" onclick="markAttendance(${student.id}, 'Present')">Present</button>
+                            <button class="attendance-btn btn-absent" onclick="markAttendance(${student.id}, 'Absent')">Absent</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                    </tbody>
+                </table>
+            `;
+
+            tableDiv.innerHTML = html;
+        }
+
+        function markAttendance(studentId, status) {
+            currentAttendance[studentId] = status;
+            const subject = document.getElementById('subjectSelect').value;
+            renderAttendanceTable(subject);
+            updateStats();
+        }
+
+        function saveAttendance() {
+            const subject = document.getElementById('subjectSelect').value;
+            const date = document.getElementById('dateInput').value;
+
+            if (!subject || !date) {
+                alert('Please select both subject and date!');
+                return;
+            }
+
+            if (Object.keys(currentAttendance).length === 0) {
+                alert('Please mark attendance for at least one student!');
+                return;
+            }
+
+            const key = `${subject}_${date}`;
+            attendanceData[key] = { ...currentAttendance };
+            
+            alert('Attendance saved successfully!');
+            updateStats();
+        }
+
+        function calculateAttendancePercentage(studentId, subject) {
+            let present = 0;
+            let total = 0;
+
+            Object.keys(attendanceData).forEach(key => {
+                if (key.startsWith(subject)) {
+                    total++;
+                    if (attendanceData[key][studentId] === 'Present') {
+                        present++;
+                    }
+                }
+            });
+
+            return total > 0 ? (present / total) * 100 : 0;
+        }
+
+        function updateStats() {
+            const totalStudents = students.length;
+            let presentCount = 0;
+            let absentCount = 0;
+
+            Object.values(currentAttendance).forEach(status => {
+                if (status === 'Present') presentCount++;
+                if (status === 'Absent') absentCount++;
+            });
+
+            const avgAttendance = totalStudents > 0 ? (presentCount / totalStudents) * 100 : 0;
+
+            document.getElementById('totalStudents').textContent = totalStudents;
+            document.getElementById('presentCount').textContent = presentCount;
+            document.getElementById('absentCount').textContent = absentCount;
+            document.getElementById('avgAttendance').textContent = avgAttendance.toFixed(1) + '%';
+        }
+
+        // Initialize on page load
+        initializeSubjects();
+        setDefaultDate();
+        updateStats();
+        renderAttendanceTable('');
+    </script>
+</body>
+</html>
